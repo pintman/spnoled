@@ -1,3 +1,4 @@
 venv
 .vscode/
 __pycache__/
+schlangen_websocket_local.py
