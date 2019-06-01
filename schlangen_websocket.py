@@ -1,5 +1,7 @@
+import schlangen_websocket_local
+
 url = 'wss://schlangen.bytewerk.org:443/websocket'
-viewer_key = '4946823228349712590'
+viewer_key = schlangen_websocket_local.viewer_key
 
 def get_topic(json_msg):
     return json_msg['t']
