@@ -18,7 +18,6 @@ num_msgs = 0
 JOYSTICK_MOVEMENT = 1  # Pixel per joystick event
 SLEEP_AFTER_UPDATE = 0.05 # Seconds
 USE_JOYSTICK = True
-SEND_TO_PROCESSING = False
 
 def on_message(ws, message):
     global num_msgs
