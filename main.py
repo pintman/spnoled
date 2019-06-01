@@ -17,20 +17,16 @@ oled_display = display.Display()
 num_msgs = 0
 JOYSTICK_MOVEMENT = 1  # Pixel per joystick event
 SLEEP_AFTER_UPDATE = 0.05 # Seconds
+USE_JOYSTICK = True
+SEND_TO_PROCESSING = False
 
 def on_message(ws, message):
     global num_msgs
     num_msgs += 1
-    #def handle():
-    #print("handle message in thread")
     msg_json = json.loads(message)
 
     if sws.is_bot_moved_head(msg_json):
-        #print(message)
         handle_bot_moved_head(msg_json['items'])
-        #sys.exit()
-
-    #thread.start_new_thread(handle, ())
 
 def handle_bot_moved_head(bots_list):
     maxx, maxy = 0, 0    
@@ -65,11 +61,6 @@ def on_open(ws):
         auth = '{"viewer_key": ' + sws.viewer_key + '}'
         #print("send auth", auth)
         ws.send(auth)
-        '''
-        for i in range(3):
-            time.sleep(1)
-            ws.send("Hello %d" % i)
-        '''
         time.sleep(1)
         #ws.close()
         #print("thread finished...")
@@ -84,7 +75,6 @@ def joystick_handling():
 
 
 def handle_joystick_event(joystick_event):
-    return 
     print("Handling Joystick event", joystick_event) #, chr(joystick_event))
 
     if joystick_event == ord('w'):
@@ -108,7 +98,8 @@ def main():
                               on_error = on_error,
                               on_close = on_close)
     ws.on_open = on_open
-    thread.start_new_thread(joystick_handling, ())
+    if USE_JOYSTICK:
+        thread.start_new_thread(joystick_handling, ())
     ws.run_forever()
 
 
