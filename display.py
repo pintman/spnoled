@@ -8,6 +8,8 @@ BAUDRATE = 9600
 WIDTH = 128
 HEIGHT = 64
 DEFAULT_OFFSET = [3000, 2000]
+SEND_TO_PROCESSING = False
+
 
 class Display:
     def __init__(self):
@@ -16,7 +18,9 @@ class Display:
         self.width = WIDTH
         self.height = HEIGHT
         self.socket = socket.socket()
-        self.socket.connect(HOST_PORT)
+        if SEND_TO_PROCESSING:
+            self.socket.connect(HOST_PORT)
+
         self.last_update = time.time()
         try:
             self.ser = serial.Serial(DEVICE, BAUDRATE)
@@ -44,7 +48,8 @@ class Display:
         print("Sending buffer with ", len(self.buffer), 
               "Bytes. Since last Update", round(time.time() - self.last_update, 1))
         bytes_written = self.ser.write(self.buffer)
-        self.socket.send(bytes(self.buffer))
+        if SEND_TO_PROCESSING:
+            self.socket.send(bytes(self.buffer))
         self.ser.flush()
         print("Sending finished. Bytes written", bytes_written)
         self.buffer.clear()
