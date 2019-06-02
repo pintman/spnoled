@@ -8,7 +8,6 @@ BAUDRATE = 9600
 WIDTH = 128
 HEIGHT = 64
 DEFAULT_OFFSET = [3000, 2000]
-SEND_TO_PROCESSING = False
 
 
 class Display:
@@ -17,9 +16,6 @@ class Display:
         self.offset = DEFAULT_OFFSET
         self.width = WIDTH
         self.height = HEIGHT
-        self.socket = socket.socket()
-        if SEND_TO_PROCESSING:
-            self.socket.connect(HOST_PORT)
 
         self.last_update = time.time()
         try:
@@ -47,13 +43,14 @@ class Display:
         self.buffer.append(ord('u'))
         print("Sending buffer with ", len(self.buffer), 
               "Bytes. Since last Update", round(time.time() - self.last_update, 1))
-        bytes_written = self.ser.write(self.buffer)
-        if SEND_TO_PROCESSING:
-            self.socket.send(bytes(self.buffer))
+        bytes_written = self._send()
         self.ser.flush()
         print("Sending finished. Bytes written", bytes_written)
         self.buffer.clear()
         self.last_update = time.time()
+
+    def _send(self):
+        return self.ser.write(self.buffer)
 
     def test(self):
         print("Starting test program")
@@ -66,6 +63,19 @@ class Display:
             self.ser.write(b'1')
             #self.ser.write(b'\n')
             time.sleep(1)
+
+
+class ProcessingAdditionalDisplay(Display):
+    def __init__(self):
+        super().__init__()
+
+        self.socket = socket.socket()
+        self.socket.connect(HOST_PORT)
+
+    def _send(self):
+        super()._send()
+        return self.socket.send(bytes(self.buffer))
+
 
 if __name__ == '__main__':
     disp = Display()

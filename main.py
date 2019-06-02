@@ -13,11 +13,17 @@ import sys
 url = sws.url
 
 all_bots = []
-oled_display = display.Display()
 num_msgs = 0
 JOYSTICK_MOVEMENT = 1  # Pixel per joystick event
 SLEEP_AFTER_UPDATE = 0.05 # Seconds
 USE_JOYSTICK = True
+SEND_TO_PROCESSING = True
+
+if SEND_TO_PROCESSING:
+    oled_display = display.ProcessingAdditionalDisplay()
+else:
+    oled_display = display.Display()
+
 
 def on_message(ws, message):
     global num_msgs
